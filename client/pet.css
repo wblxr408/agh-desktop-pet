@@ -1,0 +1,46 @@
+.agnes-desktop-pet {
+  position: fixed;
+  z-index: 25;
+  inset-inline-end: max(8px, env(safe-area-inset-right));
+  inset-block-end: calc(82px + env(safe-area-inset-bottom));
+  width: clamp(348px, 48vw, 546px);
+  pointer-events: none;
+  color: var(--text-primary, #1b1d22);
+}
+
+.agnes-desktop-pet__button {
+  position: absolute;
+  inset: 35% 26% 4%;
+  padding: 0;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.agnes-desktop-pet__button:focus-visible {
+  outline: 2px solid var(--accent-primary, #4f5bd5);
+  outline-offset: 2px;
+}
+
+.agnes-desktop-pet canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.agnes-desktop-pet__status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+  .agnes-desktop-pet {
+    inset-block-end: calc(110px + env(safe-area-inset-bottom));
+  }
+}

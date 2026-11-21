@@ -1,0 +1,52 @@
+{
+  "name": "@wblxr408/desktop-pet",
+  "version": "0.1.1",
+  "type": "module",
+  "exports": "./index.mjs",
+  "files": [
+    "index.mjs",
+    "client",
+    "README.md",
+    "agh.market.json",
+    "LICENSE"
+  ],
+  "agnes": {
+    "plugins": [
+      {
+        "export": "main",
+        "id": "ext:agnes-desktop-pet/main",
+        "apiRange": "^5.0.0",
+        "runtime": "in-process",
+        "capabilities": {
+          "ui": true
+        },
+        "metadata": {
+          "displayName": "Agnes desktop pet",
+          "summary": "An animated pet that reacts to the open Agnes conversation.",
+          "description": "An animated pet that reacts to the open Agnes conversation.",
+          "locales": {
+            "zh-CN": {
+              "displayName": "Agnes 桌宠",
+              "summary": "随当前 Agnes 会话状态变化的悬浮桌宠。",
+              "description": "随当前 Agnes 会话状态变化的悬浮桌宠。"
+            }
+          }
+        }
+      }
+    ],
+    "clientDescriptors": [
+      {
+        "rowId": "ext:agnes-desktop-pet/main",
+        "path": "./client/agnes.client.json"
+      }
+    ],
+    "provides": [
+      "ui"
+    ]
+  },
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wblxr408/agh-desktop-pet"
+  }
+}

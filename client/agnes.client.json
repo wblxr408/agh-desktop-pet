@@ -1,0 +1,11 @@
+{
+  "client": {
+    "id": "agnes-desktop-pet",
+    "entry": "./index.mjs",
+    "styles": ["./pet.css"],
+    "assets": ["./poses.webp", "./motion.mjs", "./state.mjs"],
+    "slots": ["shell.overlay"],
+    "slotCatalogVersion": "dsh-client-slots/v1",
+    "lifetime": "profile"
+  }
+}
