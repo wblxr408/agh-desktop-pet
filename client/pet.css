@@ -2,8 +2,9 @@
   position: fixed;
   z-index: 25;
   inset-inline-end: max(8px, env(safe-area-inset-right));
-  inset-block-end: calc(82px + env(safe-area-inset-bottom));
-  width: clamp(348px, 48vw, 546px);
+  --agnes-pet-fallback-clearance: calc(82px + env(safe-area-inset-bottom));
+  inset-block-end: max(var(--agnes-pet-fallback-clearance), var(--agnes-pet-clearance, 0px));
+  width: min(clamp(348px, 48vw, 546px), calc(100vw - 16px), var(--agnes-pet-room-width, 100vw));
   pointer-events: none;
   color: var(--text-primary, #1b1d22);
 }
@@ -17,6 +18,10 @@
   background: transparent;
   cursor: pointer;
   pointer-events: auto;
+}
+
+.agnes-desktop-pet[data-no-interaction-room] .agnes-desktop-pet__button {
+  visibility: hidden;
 }
 
 .agnes-desktop-pet__button:focus-visible {
@@ -41,6 +46,6 @@
 
 @media (max-width: 600px) {
   .agnes-desktop-pet {
-    inset-block-end: calc(110px + env(safe-area-inset-bottom));
+    --agnes-pet-fallback-clearance: calc(110px + env(safe-area-inset-bottom));
   }
 }

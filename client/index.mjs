@@ -1,4 +1,4 @@
-import { createElement as h, useEffect, useRef, useState, useSyncExternalStore } from 'react'
+import { createElement as h, useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { drawPose, motions, stageHeight, stageWidth } from './motion.mjs'
 import { chooseIdleAction, selectActivity } from './state.mjs'
 
@@ -79,12 +79,72 @@ function followSession(ctx, readiness, onAction) {
   }
 }
 
+
+function clearComposer(pet) {
+  const selector = '[data-agnes-composer-dsh], form[data-agnes-region="composer"]'
+  let composers = new Set()
+  let frame
+
+  function place() {
+    let top = window.innerHeight
+    for (const composer of composers) {
+      const rect = composer.getBoundingClientRect()
+      if (rect.width > 0 && rect.height > 0 && rect.bottom > 0) top = Math.min(top, rect.top)
+    }
+    if (top === window.innerHeight) {
+      pet.style.removeProperty('--agnes-pet-clearance')
+      pet.style.removeProperty('--agnes-pet-room-width')
+      pet.removeAttribute('data-no-interaction-room')
+      return
+    }
+    const clearance = window.innerHeight - top + 12
+    const room = Math.max(0, top - 24)
+    pet.style.setProperty('--agnes-pet-clearance', `${clearance}px`)
+    pet.style.setProperty('--agnes-pet-room-width', `${room * stageWidth / stageHeight}px`)
+    // An expanded composer can leave room to draw but no usable pointer or focus target.
+    pet.toggleAttribute('data-no-interaction-room', room < 76)
+  }
+
+  const resize = new ResizeObserver(place)
+  function refresh() {
+    const next = new Set(document.querySelectorAll(selector))
+    for (const el of composers) if (!next.has(el)) resize.unobserve(el)
+    for (const el of next) if (!composers.has(el)) resize.observe(el)
+    composers = next
+    place()
+  }
+
+  function schedule() {
+    if (frame !== undefined) return
+    frame = requestAnimationFrame(() => {
+      frame = undefined
+      refresh()
+    })
+  }
+
+  const changes = new MutationObserver(schedule)
+  changes.observe(document.body, { childList: true, subtree: true })
+  window.addEventListener('resize', place)
+  window.addEventListener('scroll', schedule, true)
+  refresh()
+  return () => {
+    cancelAnimationFrame(frame)
+    changes.disconnect()
+    resize.disconnect()
+    window.removeEventListener('resize', place)
+    window.removeEventListener('scroll', schedule, true)
+  }
+}
+
 function Pet({ ctx, readiness, language }) {
+  const overlay = useRef(null)
   const canvas = useRef(null)
   const poke = useRef(() => {})
   const [action, setAction] = useState('idle')
   const [visible, setVisible] = useState(false)
   const text = language?.startsWith('zh') ? labels.zh : labels.en
+
+  useLayoutEffect(() => clearComposer(overlay.current), [])
 
   useEffect(() => {
     const context = canvas.current?.getContext('2d')
@@ -199,7 +259,7 @@ function Pet({ ctx, readiness, language }) {
 
   return h(
     'div',
-    { className: 'agnes-desktop-pet', hidden: !visible },
+    { ref: overlay, className: 'agnes-desktop-pet', hidden: !visible },
     h('canvas', { ref: canvas, width: stageWidth, height: stageHeight, 'aria-hidden': true }),
     h('button', {
       type: 'button',
